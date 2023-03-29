@@ -1,23 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Form, Nav, Navbar } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate, useParams } from "react-router-dom";
+import { auth, db } from "../firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
+
 
 export default function PostPageUpdate() {
   const params = useParams();
   const id = params.id;
   const [caption, setCaption] = useState("");
   const [image, setImage] = useState("");
+  const [error, setError] = useState("");
+  const [user, loading] = useAuthState(auth);
+  const navigate = useNavigate();
 
-  async function updatePost() {}
+
+  async function updatePost() {
+
+    const dataPresent = caption && image;
+    setError("");
+    if (!dataPresent) {
+        setError("Missing Data")
+    } else {
+        try{
+            await updateDoc(doc(db, "posts", id), { caption, image });
+            navigate("/");
+        } catch (error) {
+            setError(error.message);
+        }
+    }
+}
 
   async function getPost(id) {
-    setCaption("");
-    setImage("");
+    const postDocument = await getDoc(doc(db, "posts", id));
+    const post = postDocument.data();
+    setCaption(post.caption);
+    setImage(post.image);
   }
 
   useEffect(() => {
+    if (loading) return;
+    if (!user) navigate("/login");
     getPost(id);
-  }, [id]);
+  }, [id, navigate, user, loading]);
+
 
   return (
     <div>
@@ -26,7 +54,8 @@ export default function PostPageUpdate() {
           <Navbar.Brand href="/">Tinkergram</Navbar.Brand>
           <Nav>
             <Nav.Link href="/add">New Post</Nav.Link>
-            <Nav.Link href="/add">🚪</Nav.Link>
+            <Nav.Link onClick={(e) => signOut(auth)}>🚪</Nav.Link>
+
           </Nav>
         </Container>
       </Navbar>
@@ -58,6 +87,7 @@ export default function PostPageUpdate() {
           <Button variant="primary" onClick={(e) => updatePost()}>
             Submit
           </Button>
+          <p>{error}</p>
         </Form>
       </Container>
     </div>
