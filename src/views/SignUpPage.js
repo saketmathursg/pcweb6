@@ -1,9 +1,16 @@
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
+
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   return (
     <Container>
@@ -30,11 +37,38 @@ export default function SignUpPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="confirmPassword"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
           <a href="/login">Have an existing account? Login here.</a>
         </Form.Group>
-        <Button variant="primary">Sign Up</Button>
+
+
+        <Button 
+        variant="primary"
+        onClick={async (e) => {
+          setError("");
+          const canSignup = username && password && confirmPassword;
+          if (password !==  confirmPassword) {
+            setError("password not same as confirm password")
+          } else {
+          if (canSignup)
+            try {
+              await createUserWithEmailAndPassword(auth, username, password);
+              navigate("/");
+            } catch (error) {
+              setError(error.message);
+            }
+        }}} >Sign Up</Button>
       </Form>
-      <p></p>
+      <p>{error}</p>
     </Container>
   );
 }
