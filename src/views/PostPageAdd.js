@@ -1,13 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Form, Nav, Navbar } from "react-bootstrap";
+import { addDoc, collection } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from "react-router-dom";
+import { auth, db } from "../firebase";
+import { signOut } from "firebase/auth";
+
 
 export default function PostPageAdd() {
   const [caption, setCaption] = useState("");
   const [image, setImage] = useState("");
+  const [user, loading] = useAuthState(auth);
+  const navigate = useNavigate();
 
-  async function addPost() {}
 
-  useEffect(() => {}, []);
+  async function addPost() {
+    await addDoc(collection(db, "posts"), { caption, image });
+    navigate("/");
+  }
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) return navigate("/login");
+  }, [navigate, user, loading]);
 
   return (
     <>
@@ -17,6 +32,7 @@ export default function PostPageAdd() {
           <Nav>
             <Nav.Link href="/add">New Post</Nav.Link>
             <Nav.Link href="/add">🚪</Nav.Link>
+            <Nav.Link onClick={(e) => signOut(auth)}>🚪</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
