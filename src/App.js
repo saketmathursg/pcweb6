@@ -15,7 +15,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/add" element={<PostPageAdd />}/>
         <Route path="/update/:id" element={<PostPageUpdate/>}/>
-        <Route path="/details/:id" element={<PostPageDetails/>}/> 
+        <Route path="/post/:id" element={<PostPageDetails/>}/> 
 
       </Routes>
     </BrowserRouter>
