@@ -16,15 +16,22 @@ export default function PostPageUpdate() {
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
   const [previewImage, setPreviewImage] = useState("");
+  const [error, setError] = useState("");
+
 
 
   async function updatePost() {
 
-    const imageReference = ref(storage, `images/${image.name}`);
-    const response = await uploadBytes(imageReference, image);
-    const imageUrl = await getDownloadURL(response.ref);
-    await updateDoc(doc(db, "posts", id), { caption, image: imageUrl });
-    navigate("/");
+    const hasData = image && caption;
+    if (hasData) {
+      const imageReference = ref(storage, `images/${image.name}`);
+      const response = await uploadBytes(imageReference, image);
+      const imageUrl = await getDownloadURL(response.ref);
+      await updateDoc(doc(db, "posts", id), { caption, image: imageUrl });
+      navigate("/");
+    } else {
+      setError (" Please provide both caption & image");
+    }
 
 }
 
@@ -32,7 +39,7 @@ export default function PostPageUpdate() {
     const postDocument = await getDoc(doc(db, "posts", id));
     const post = postDocument.data();
     setCaption(post.caption);
-    setImage(post.image);
+    setImage("");
     setPreviewImage(post.image);
   }
 
@@ -95,7 +102,7 @@ export default function PostPageUpdate() {
           <Button variant="primary" onClick={(e) => updatePost()}>
             Submit
           </Button>
-          <p></p>
+          <p>{error}</p>
         </Form>
       </Container>
     </div>
