@@ -5,6 +5,7 @@ import SignUpPage from "./views/SignUpPage";
 import PostPageAdd from "./views/PostPageAdd";
 import PostPageDetails from "./views/PostPageDetails";
 import PostPageUpdate from "./views/PostPageUpdate";
+import ErrorPage from "./views/ErrorPage";
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <Route path="/add" element={<PostPageAdd />}/>
         <Route path="/update/:id" element={<PostPageUpdate/>}/>
         <Route path="/post/:id" element={<PostPageDetails/>}/> 
-
+        <Route path="/error" element={<ErrorPage/>}/> 
       </Routes>
     </BrowserRouter>
   );

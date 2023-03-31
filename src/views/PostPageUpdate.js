@@ -36,11 +36,15 @@ export default function PostPageUpdate() {
 }
 
   async function getPost(id) {
-    const postDocument = await getDoc(doc(db, "posts", id));
-    const post = postDocument.data();
-    setCaption(post.caption);
-    setImage("");
-    setPreviewImage(post.image);
+    try{
+      const postDocument = await getDoc(doc(db, "posts", id));
+      const post = postDocument.data();
+      setCaption(post.caption);
+      setImage("");
+      setPreviewImage(post.image);
+      } catch {
+      navigate("/error");
+    }
   }
 
   useEffect(() => {

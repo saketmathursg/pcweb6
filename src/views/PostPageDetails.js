@@ -22,17 +22,22 @@ export default function PostPageDetails() {
   }
 
   async function getPost(id) {
-    console.log(id);
-    const postDocument = await getDoc(doc(db, "posts", id));
-    const post = postDocument.data();
-    setCaption(post.caption);
-    setImage(post.image);
+    try{
+      const postDocument = await getDoc(doc(db, "posts", id));
+      const post = postDocument.data();
+      console.log("inside try");
+      setCaption(post.caption);
+      setImage(post.image);
+    } catch {
+      console.log("inside catch 1")
+      navigate("/error");
+    }
   }
 
-  useEffect(() => {
+useEffect(() => {
     if (loading) return;
     if (!user) navigate("/login");
-    getPost(id);
+      getPost(id);
   }, [id, navigate, user, loading]);
 
 
