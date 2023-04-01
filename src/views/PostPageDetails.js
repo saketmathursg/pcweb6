@@ -25,11 +25,21 @@ export default function PostPageDetails() {
     try{
       const postDocument = await getDoc(doc(db, "posts", id));
       const post = postDocument.data();
-      console.log("inside try");
       setCaption(post.caption);
       setImage(post.image);
+      console.log(id);
+      console.log(post)
+
+//      const queryCommentsSecond = await getDoc(doc(db, "posts", id)).getDocs(collection(db, "Comments"));  
+//      const queryCollection = await getDocs(collection(db,'posts/2Mqm81iHTbUg6H1Akr69/Comments'));
+//      const comments = queryCollection.docs.map((doc) => {
+//        return { id: doc.id, ...doc.data() };
+//     });
+//      console.log(comments[0].User);
+//      console.log(comments.length);
+ //     console.log(queryCollection);
+
     } catch {
-      console.log("inside catch 1")
       navigate("/error");
     }
   }
